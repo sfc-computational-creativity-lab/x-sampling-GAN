@@ -1,0 +1,1 @@
+scp t16366ak@gpgpu02.sfc.keio.ac.jp:~/wavegan/train/* ./model/

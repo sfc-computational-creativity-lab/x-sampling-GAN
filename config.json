@@ -1,0 +1,17 @@
+{
+    "ip" : "127.0.0.1",
+    "address" : "/gan",
+    "ports": {
+        "send": 5555,
+        "receive": 4444
+    },
+    "audio": {
+        "sampling_rate": 44100,
+        "freq_hz": 440.0,
+        "duration": 2.0   
+    },
+    "model": {
+        "dir": "model/",
+        "meta_filepath": "model/infer/infer.meta"
+    }
+}
