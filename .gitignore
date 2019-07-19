@@ -5,7 +5,7 @@
 *.ipynb
 
 # tensorflow model / checkpoints
-model/
+models/
 
 # sound files
 sounds/

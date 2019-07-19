@@ -19,9 +19,11 @@ from scipy.io.wavfile import write as sound_write
 
 # Set Parser
 parser = argparse.ArgumentParser(description='WaveGAN Sound Generation')
-parser.add_argument('-S', '--sum', type=int, default=max,
-                    help='sum the integers (default: find the max)')
+parser.add_argument('-G', '--genre', type=str, default="birds",
+                    help='Select the genre from "birds", "drums", "piano", "sc09", "timit"')
 args = parser.parse_args()
+
+assert args.genre in ["birds", "drums", "piano", "sc09", "timit"], "Select the correct genre"
 
 # Set Logger
 logging.basicConfig(level=logging.DEBUG)
@@ -33,18 +35,10 @@ with open("config.json", "r") as f:
 
 # Load the tensorflow graph
 tf.reset_default_graph()
-saver = tf.train.import_meta_graph(
-    conf["model"]["meta_filepath"])
+saver = tf.train.import_meta_graph(conf["model"]["dir"] + args.genre + "/infer.meta")
 graph = tf.get_default_graph()
 sess = tf.InteractiveSession()
-
-if os.path.exists(conf["model"]["dir"] + "model.ckpt"):
-    model_path = conf["model"]["dir"] + "model.ckpt"
-else:
-    model_path = tf.train.get_checkpoint_state(
-        conf["model"]["dir"]).model_checkpoint_path
-
-saver.restore(sess, model_path)
+saver.restore(sess, conf["model"]["dir"] + args.genre + "/model.ckpt")
 
 # Synthesize G(z): Generator Model
 z = graph.get_tensor_by_name('z:0')
