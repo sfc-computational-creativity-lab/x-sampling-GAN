@@ -7,9 +7,9 @@
 
 ## MAX/MSP (Max for Live)
 
-Send generator ($G(z)$) input vector $z$ (100 dimension) as OSC message.
+Send generator G(z) input vector z (100 dimension) as OSC message.
 
-![maxpat](https://i.gyazo.com/45162680360267a2111bde596961059f.gif)
+![audioeffect](https://i.gyazo.com/13ec66307662856c14ce495b6ec9a907.gif)
 
 On Max for Live, use `maxpat` file as max audio effect (`.amxd`).
 then run `run.py`
