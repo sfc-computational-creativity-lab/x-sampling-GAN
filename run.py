@@ -51,8 +51,7 @@ z = graph.get_tensor_by_name('z:0')
 G_z = graph.get_tensor_by_name('G_z:0')
 
 # set OSC client
-client = udp_client.UDPClient("127.0.0.1",
-                              conf["ports"]["send"])
+client = udp_client.UDPClient(conf["ip"], conf["ports"]["send"])
 
 
 def run():
@@ -77,7 +76,6 @@ def generate(*value) -> None:
     sound_write(path, 16000, generated)
     log.info(f"Saved!: {path}")
     _osc_send_msg(conf["address"], path)
-    return
 
 
 def _osc_send_msg(address: str, msg_value) -> None:

@@ -1,7 +1,9 @@
-# `x-sampling`: Sample sound transforming with GANs
+# **x-sampling**: Sample sound transforming with GANs
 
 ![](https://img.shields.io/badge/lab-cclab-red.svg)
 ![](https://img.shields.io/badge/year-2019s-green.svg)
+
+---
 
 ## MAX/MSP (Max for Live)
 
@@ -11,6 +13,8 @@ Send generator ($G(z)$) input vector $z$ (100 dimension) as OSC message.
 
 On Max for Live, use `maxpat` file as max audio effect (`.amxd`).
 then run `run.py`
+
+---
 
 ## Python
 
@@ -28,9 +32,18 @@ and start receiving OSC message
 python run.py
 ```
 
+---
+
 ## Model Training
 
 Use official implementation [/chrisdonahue/wavegan](https://github.com/chrisdonahue/wavegan)
+
+clone on GPGPU server and exec training
+
+```shell
+export CUDA_VISIBLE_DEVICES="0"
+python train_wavegan.py train ./train --data_dir ./data/
+```
 
 ### Dataset
 
@@ -39,6 +52,11 @@ get the Dataset **Speech Commands Zero through Nine (SC09)** from Adversarial Au
 ```shell
 sh get_data.sh
 ```
+
+or other datasets
+
+- [audioset](https://research.google.com/audioset/)
+- [FSD: a dataset of everyday sounds](https://annotator.freesound.org/fsd/)
 
 ### Requirements
 
@@ -55,6 +73,8 @@ or
 ```shell
 pip install -r requirements.txt
 ```
+
+---
 
 ## Generate Sound
 
@@ -94,6 +114,8 @@ plt.plot(_G_z[0, :, 0])
 ```
 ![waveform](src/wave.png)
 
+---
+
 ## Python-OSC Sample
 
 ```python
@@ -126,6 +148,8 @@ dispatcher.map("/sample", process)
 server = osc_server.ThreadingOSCUDPServer(("127.0.0.1", 4444), dispatcher)
 server.serve_forever()
 ```
+
+---
 
 ## References
 
