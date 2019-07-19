@@ -48,7 +48,7 @@ def osc_send():
         conf['address'], conf['ports']['receive']))
     client.send(msg.build())
     return
- 
+
 
 if __name__ == '__main__':
     # port num conflict

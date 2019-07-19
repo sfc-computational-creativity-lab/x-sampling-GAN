@@ -25,7 +25,7 @@ args = parser.parse_args()
 
 # Set Logger
 logging.basicConfig(level=logging.DEBUG)
-log = getLogger(__name__)
+logger = getLogger(__name__)
 
 # Load Setting
 with open("config.json", "r") as f:
@@ -64,23 +64,36 @@ def run():
 
 
 def generate(*value) -> None:
-    log.info("start generating")
     # Generator input variable `z`
-    input_z = value[1].split()
+    log("start generating")
+    # cut value 256 -> 100
+    input_z = value[50:150]
     assert len(input_z) == 100, f"invalid input z shape, expected dim is 100 != {len(input_z)}"
     input_z = np.array(list(map(float, input_z))).reshape(1, 100)
 
     generated = sess.run(G_z, {z: input_z})[0, :, 0]
     path = "sounds/{}.wav".format(d.now().strftime('%Y%m%d-%H%M%S'))
-    log.info(f"Saving .wav file...")
+    log(f"Saving .wav file...")
     sound_write(path, 16000, generated)
-    log.info(f"Saved!: {path}")
-    _osc_send_msg(conf["address"], path)
+    log(f"Saved!: {path}")
+    _osc_send_msg(conf["address"], os.getcwd() + "/" + path)
 
 
 def _osc_send_msg(address: str, msg_value) -> None:
     msg = osc_message_builder.OscMessageBuilder(address=address)
     msg.add_arg(str(msg_value))
+    client.send(msg.build())
+
+
+log_msg_max = [""] * 10
+
+def log(msg_value: str) -> None:
+    logger.info(msg_value)
+    global log_msg_max
+    log_msg_max.insert(0, msg_value)
+    log_msg_max.pop(-1)
+    msg = osc_message_builder.OscMessageBuilder(address="/maxlog")
+    msg.add_arg("\n".join(log_msg_max))
     client.send(msg.build())
 
 
