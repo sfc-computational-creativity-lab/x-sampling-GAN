@@ -1,3 +1,6 @@
+# notebook files
+*.ipynb
+
 # tensorflow model / checkpoints
 model/
 
