@@ -3,22 +3,22 @@
 ![](https://img.shields.io/badge/lab-cclab-red.svg)
 ![](https://img.shields.io/badge/year-2019s-green.svg)
 
----
-
-## MAX/MSP (Max for Live)
-
-Send generator G(z) input vector z (100 dimension) as OSC message.
-
 ![audioeffect](https://i.gyazo.com/13ec66307662856c14ce495b6ec9a907.gif)
 
-On Max for Live, use `maxpat` file as max audio effect (`.amxd`).
+Send generator G(z) input vector z (100 dimension) as OSC message. 
+On Max for Live, use `maxpat` file as max audio effect (open `.amxd`).
 then run `run.py`
 
 ---
 
-## Python
+## Usage
 
-### Environment
+get trained model file.
+
+```shell
+# on x-sampling/
+sh et_model.sh
+```
 
 install dependencies
 
@@ -26,7 +26,7 @@ install dependencies
 pip install -r requirements.txt
 ```
 
-and start receiving OSC message 
+and start receiving OSC message.
 
 ```shell
 python run.py
