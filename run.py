@@ -21,6 +21,8 @@ from scipy.io.wavfile import write as sound_write
 parser = argparse.ArgumentParser(description='WaveGAN Sound Generation')
 parser.add_argument('-G', '--genre', type=str, default="birds",
                     help='Select the genre from "birds", "drums", "piano", "sc09", "timit"')
+parser.add_argument('-N', '--n_files', type=int, default=50,
+                    help='Limit of n of saved .wav files')
 args = parser.parse_args()
 
 assert args.genre in ["birds", "drums", "piano", "sc09", "timit"], "Select the correct genre"
@@ -57,20 +59,29 @@ def run():
     server.serve_forever()
 
 
+saved_data_pathes = [""] * args.n_files
+
 def generate(*value) -> None:
     # Generator input variable `z`
     log("start generating")
     # cut value 256 -> 100
-    input_z = value[50:150]
+    input_z = value[1:101]
     assert len(input_z) == 100, f"invalid input z shape, expected dim is 100 != {len(input_z)}"
     input_z = np.array(list(map(float, input_z))).reshape(1, 100)
 
     generated = sess.run(G_z, {z: input_z})[0, :, 0]
     path = "sounds/{}.wav".format(d.now().strftime('%Y%m%d-%H%M%S'))
-    log(f"Saving .wav file...")
+    log(f"saving .wav file...")
     sound_write(path, 16000, generated)
-    log(f"Saved!: {path}")
+    log(f"saved: {path}")
     _osc_send_msg(conf["address"], os.getcwd() + "/" + path)
+
+    # .wav file
+    global saved_data_pathes
+    saved_data_pathes.append(path)
+    if os.path.exists(saved_data_pathes[0]):
+        os.remove(saved_data_pathes[0])
+    saved_data_pathes.pop(0)
 
 
 def _osc_send_msg(address: str, msg_value) -> None:
