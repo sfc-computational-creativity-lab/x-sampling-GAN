@@ -1,6 +1,8 @@
 {
     "ip" : "127.0.0.1",
     "address" : "/gan",
+    "log" : "/maxlog",
+    "type" : "/type",
     "ports": {
         "send": 5555,
         "receive": 4444

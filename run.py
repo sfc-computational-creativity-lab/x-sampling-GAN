@@ -15,6 +15,7 @@ from datetime import datetime as d
 from pythonosc import osc_message_builder, udp_client
 from pythonosc import dispatcher, osc_server
 from scipy.io.wavfile import write as sound_write
+from scripts.generator import Generator
 
 
 # Set Parser
@@ -35,17 +36,6 @@ logger = getLogger(__name__)
 with open("config.json", "r") as f:
     conf = json.load(f)
 
-# Load the tensorflow graph
-tf.reset_default_graph()
-saver = tf.train.import_meta_graph(conf["model"]["dir"] + args.genre + "/infer.meta")
-graph = tf.get_default_graph()
-sess = tf.InteractiveSession()
-saver.restore(sess, conf["model"]["dir"] + args.genre + "/model.ckpt")
-
-# Synthesize G(z): Generator Model
-z = graph.get_tensor_by_name('z:0')
-G_z = graph.get_tensor_by_name('G_z:0')
-
 # set OSC client
 client = udp_client.UDPClient(conf["ip"], conf["ports"]["send"])
 
@@ -54,12 +44,15 @@ def run():
     # OSC receive
     dsp = dispatcher.Dispatcher()
     dsp.map(conf["address"], generate)
+    dsp.map(conf["type"], change_genre)
     server = osc_server.ThreadingOSCUDPServer(
         (conf["ip"], conf["ports"]["receive"]), dsp)
     server.serve_forever()
 
 
 saved_data_pathes = [""] * args.n_files
+
+generator = Generator()
 
 def generate(*value) -> None:
     # Generator input variable `z`
@@ -68,8 +61,8 @@ def generate(*value) -> None:
     input_z = value[1:101]
     assert len(input_z) == 100, f"invalid input z shape, expected dim is 100 != {len(input_z)}"
     input_z = np.array(list(map(float, input_z))).reshape(1, 100)
-
-    generated = sess.run(G_z, {z: input_z})[0, :, 0]
+    global generator
+    generated = generator.gen(input_z)
     path = "sounds/{}.wav".format(d.now().strftime('%Y%m%d-%H%M%S'))
     log(f"saving .wav file...")
     sound_write(path, 16000, generated)
@@ -90,6 +83,8 @@ def _osc_send_msg(address: str, msg_value) -> None:
     client.send(msg.build())
 
 
+
+# Max Python Logger
 log_msg_max = [""] * 10
 
 def log(msg_value: str) -> None:
@@ -100,6 +95,13 @@ def log(msg_value: str) -> None:
     msg = osc_message_builder.OscMessageBuilder(address="/maxlog")
     msg.add_arg("\n".join(log_msg_max))
     client.send(msg.build())
+
+
+# Change Model Type
+def change_genre(*genre_name):
+    global generator
+    generator.set_type(genre_name[1])
+    log(f"Change model to {genre_name}")
 
 
 if __name__ == "__main__":
