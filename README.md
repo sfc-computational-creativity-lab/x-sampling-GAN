@@ -9,6 +9,11 @@ Send generator G(z) input vector z (100 dimension) as OSC message.
 On Max for Live, use `maxpat` file as max audio effect (open `.amxd`).
 then run `run.py`
 
+can be used with videos
+
+![video](https://i.gyazo.com/ba4fb1d097976e636553b7db7ca1c323.gif)
+
+
 ---
 
 ## Usage
@@ -17,7 +22,7 @@ get trained model file.
 
 ```shell
 # on x-sampling/
-sh et_model.sh
+sh download_models.sh
 ```
 
 install dependencies
